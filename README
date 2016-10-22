@@ -1,0 +1,27 @@
+Package %{scl_name} provides the Eclipse IDE with a set of extension plug-ins
+delivered as a Software Collection. For more information about Software
+Collections, see the scl(1) man page.
+
+Usage: scl enable %{scl} 'eclipse'
+
+Software Collections allow you to build and execute applications that are not
+located in the filesystem root hierarchy, but are stored in an alternative
+location, which is %{_scl_root} in case of the %{scl_name} collection.
+
+When you want to work with the %{scl_name} collection, use the scl
+utility (see the scl(1) man page for usage) to enable the scl
+environment.
+
+Examples:
+scl enable %{scl_name} 'eclipse'
+  Run the Eclipse IDE supplied by this Software Collection.
+
+scl enable %{scl_name} 'command --arg'
+  Run a specific command with the argument --arg within the %{scl_name}
+  Software Collections environment.
+
+scl enable %{scl_name} bash
+  Run an interactive shell within the %{scl_name} Software Collection
+  environment.
+
+Report bugs to <http://bugzilla.redhat.com>.
