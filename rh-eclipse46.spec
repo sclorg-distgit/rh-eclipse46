@@ -10,7 +10,7 @@
 Summary: Package that installs %scl
 Name: %scl_name
 Version: 1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 
 Source0: README
@@ -38,6 +38,8 @@ Installs a minimal set of Eclipse packages.
 Summary: Runtime scripts for the %scl Software Collection
 Requires: scl-utils >= 20120927-11
 Requires: rh-java-common-runtime
+# Eclipse requires Java 8 to run and build
+Requires: java-1.8.0-openjdk-devel
 
 %description runtime
 Package shipping essential scripts to work with the %scl Software
@@ -49,8 +51,8 @@ Requires: scl-utils-build >= 20120927-11
 Requires: %{name}-scldevel = %{version}-%{release}
 
 %description build
-Package shipping essential configuration macros to build %scl Software
-Collection.
+Package shipping essential configuration macros to build the %scl
+Software Collection itself.
 
 %package scldevel
 Summary: Development files for the %scl Software Collection
@@ -79,6 +81,7 @@ cp %{SOURCE2} macros.xmvn.x.%{scl}
 cat <<EOF >enable
 #!/bin/bash
 
+# We have a run-time dependency on java-common, enable it first
 . scl_source enable rh-java-common
 
 # The IDE has optional deps on other collections, so enable them if present
@@ -379,6 +382,9 @@ install -d -m 755 %{buildroot}%{_libdir}/perl5/vendor_perl/auto
 %{_root_sysconfdir}/rpm/macros.%{scl}-scldevel
 
 %changelog
+* Thu Jul 21 2016 Mat Booth <mat.booth@redhat.com> - 1-3
+- Ensure Java 8 is available
+
 * Wed Jul 20 2016 Mat Booth <mat.booth@redhat.com> - 1-2
 - Install xmvn macro overrides
 
