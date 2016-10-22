@@ -10,11 +10,12 @@
 Summary: Package that installs %scl
 Name: %scl_name
 Version: 1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 
 Source0: README
 Source1: LICENSE
+Source2: macros.xmvn
 
 BuildRequires: scl-utils-build >= 20120927-11
 BuildRequires: help2man
@@ -68,6 +69,9 @@ cat > README << EOF
 %{expand:%(cat %{SOURCE0})}
 EOF
 cp %{SOURCE1} .
+
+# Macro overrides
+cp %{SOURCE2} macros.xmvn.x.%{scl}
 
 %build
 # Enable collection script
@@ -325,9 +329,10 @@ install -p -m 755 enable %{buildroot}%{_scl_scripts}/
 install -d -m 755 %{buildroot}%{_mandir}/man7
 install -p -m 644 %{scl_name}.7 %{buildroot}%{_mandir}/man7/
 
-# Install scldevel macros
+# Install rpm macros
 install -d -m 755 %{buildroot}%{_root_sysconfdir}/rpm
 install -p -m 644 macros.%{scl}-scldevel %{buildroot}%{_root_sysconfdir}/rpm/
+install -p -m 644 macros.xmvn.x.%{scl} %{buildroot}%{_root_sysconfdir}/rpm/
 
 # Install java, ivy and xmvn config
 install -d -m 755 %{buildroot}%{_sysconfdir}/java
@@ -341,7 +346,7 @@ install -p -m 644 configuration.xml %{buildroot}%{_sysconfdir}/xdg/xmvn/
 # Other directories that should be owned by the runtime
 install -d -m 755 %{buildroot}%{_datadir}/appdata
 # Native java bits are always in /usr/lib even on 64bit arches
-install -d -m 755 %{buildroot}%{_scl_root}/usr/lib/java
+install -d -m 755 %{buildroot}%{_prefix}/lib/java
 # Otherwise unowned maven directories
 install -d -m 755 %{buildroot}%{_datadir}/maven-metadata
 install -d -m 755 %{buildroot}%{_datadir}/maven-poms
@@ -359,21 +364,24 @@ install -d -m 755 %{buildroot}%{_libdir}/perl5/vendor_perl/auto
 %files runtime -f filelist
 %doc README LICENSE
 %scl_files
-%{_mandir}/man7/%{scl_name}.*
 %{_sysconfdir}/ivy
 %{_sysconfdir}/java
-#%%dir %{_datadir}/appdata
-#%%dir %{_scl_root}/usr/lib/java
-#%%dir %{_datadir}/maven-metadata
-#%%dir %{_datadir}/maven-poms
+%dir %{_datadir}/appdata
+%dir %{_prefix}/lib/java
+%dir %{_datadir}/maven-metadata
+%dir %{_datadir}/maven-poms
 
 %files build
 %{_root_sysconfdir}/rpm/macros.%{scl}-config
+%{_root_sysconfdir}/rpm/macros.xmvn.x.%{scl}
 
 %files scldevel
 %{_root_sysconfdir}/rpm/macros.%{scl}-scldevel
 
 %changelog
+* Wed Jul 20 2016 Mat Booth <mat.booth@redhat.com> - 1-2
+- Install xmvn macro overrides
+
 * Tue Jul 19 2016 Mat Booth <mat.booth@redhat.com> - 1-1
 - Commit initial package.
 
