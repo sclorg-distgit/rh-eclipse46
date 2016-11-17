@@ -10,7 +10,7 @@
 Summary: Package that installs %scl
 Name: %scl_name
 Version: 1
-Release: 3%{?dist}
+Release: 13%{?dist}
 License: GPLv2+
 
 Source0: README
@@ -21,18 +21,97 @@ BuildRequires: scl-utils-build >= 20120927-11
 BuildRequires: help2man
 
 Requires: %{name}-base = %{version}-%{release}
+Requires: %{scl_prefix}eclipse-cdt
+Requires: %{scl_prefix}eclipse-cdt-docker
+Requires: %{scl_prefix}eclipse-cdt-llvm
+Requires: %{scl_prefix}eclipse-cdt-parsers
+Requires: %{scl_prefix}eclipse-cdt-qt
+Requires: %{scl_prefix}eclipse-changelog
+Requires: %{scl_prefix}eclipse-dltk
+Requires: %{scl_prefix}eclipse-dltk-mylyn
+Requires: %{scl_prefix}eclipse-dltk-rse
+Requires: %{scl_prefix}eclipse-dltk-ruby
+Requires: %{scl_prefix}eclipse-dltk-sh
+Requires: %{scl_prefix}eclipse-dltk-tcl
+Requires: %{scl_prefix}eclipse-gcov
+Requires: %{scl_prefix}eclipse-gprof
+Requires: %{scl_prefix}eclipse-launchbar
+Requires: %{scl_prefix}eclipse-linuxtools
+Requires: %{scl_prefix}eclipse-linuxtools-javadocs
+Requires: %{scl_prefix}eclipse-linuxtools-libhover
+Requires: %{scl_prefix}eclipse-manpage
+Requires: %{scl_prefix}eclipse-mylyn-context-cdt
+Requires: %{scl_prefix}eclipse-oprofile
+Requires: %{scl_prefix}eclipse-perf
+Requires: %{scl_prefix}eclipse-ptp
+Requires: %{scl_prefix}eclipse-ptp-gem
+Requires: %{scl_prefix}eclipse-ptp-rm-contrib
+Requires: %{scl_prefix}eclipse-ptp-sci
+Requires: %{scl_prefix}eclipse-ptp-sdm
+Requires: %{scl_prefix}eclipse-pydev
+Requires: %{scl_prefix}eclipse-pydev-mylyn
+Requires: %{scl_prefix}eclipse-remote
+Requires: %{scl_prefix}eclipse-rpm-editor
+Requires: %{scl_prefix}eclipse-rse
+Requires: %{scl_prefix}eclipse-rse-server
+Requires: %{scl_prefix}eclipse-systemtap
+Requires: %{scl_prefix}eclipse-valgrind
 
 %description
 This is the main package for %scl Software Collection.
-Installs all available Eclipse packages.
+Installs all Eclipse packages available in this SCL.
 
 %package base
 Summary: Package that installs a minimal %scl
 Requires: %{name}-runtime = %{version}-%{release}
+Requires: %{scl_prefix}eclipse-abrt
+Requires: %{scl_prefix}eclipse-cdt-native
+Requires: %{scl_prefix}eclipse-ecf-core
+Requires: %{scl_prefix}eclipse-ecf-runtime
+Requires: %{scl_prefix}eclipse-egit
+Requires: %{scl_prefix}eclipse-egit-mylyn
+Requires: %{scl_prefix}eclipse-emf-core
+Requires: %{scl_prefix}eclipse-emf-runtime
+Requires: %{scl_prefix}eclipse-epp-logging
+Requires: %{scl_prefix}eclipse-equinox-osgi
+Requires: %{scl_prefix}eclipse-filesystem
+Requires: %{scl_prefix}eclipse-gef
+Requires: %{scl_prefix}eclipse-jdt
+Requires: %{scl_prefix}eclipse-jgit
+Requires: %{scl_prefix}eclipse-linuxtools-docker
+Requires: %{scl_prefix}eclipse-linuxtools-vagrant
+Requires: %{scl_prefix}eclipse-mpc
+Requires: %{scl_prefix}eclipse-mylyn
+Requires: %{scl_prefix}eclipse-mylyn-builds
+Requires: %{scl_prefix}eclipse-mylyn-builds-hudson
+Requires: %{scl_prefix}eclipse-mylyn-context-java
+Requires: %{scl_prefix}eclipse-mylyn-context-pde
+Requires: %{scl_prefix}eclipse-mylyn-docs-epub
+Requires: %{scl_prefix}eclipse-mylyn-docs-wikitext
+Requires: %{scl_prefix}eclipse-mylyn-tasks-bugzilla
+Requires: %{scl_prefix}eclipse-mylyn-tasks-trac
+Requires: %{scl_prefix}eclipse-mylyn-tasks-web
+Requires: %{scl_prefix}eclipse-mylyn-versions
+Requires: %{scl_prefix}eclipse-mylyn-versions-cvs
+Requires: %{scl_prefix}eclipse-mylyn-versions-git
+Requires: %{scl_prefix}eclipse-p2-discovery
+Requires: %{scl_prefix}eclipse-pde
+Requires: %{scl_prefix}eclipse-platform
+Requires: %{scl_prefix}eclipse-swt
+Requires: %{scl_prefix}eclipse-tm-terminal
+Requires: %{scl_prefix}eclipse-tm-terminal-connectors
+Requires: %{scl_prefix}eclipse-usage
+Requires: %{scl_prefix}eclipse-webtools-common
+Requires: %{scl_prefix}eclipse-webtools-javaee
+Requires: %{scl_prefix}eclipse-webtools-jsf
+Requires: %{scl_prefix}eclipse-webtools-servertools
+Requires: %{scl_prefix}eclipse-webtools-sourceediting
+Requires: %{scl_prefix}eclipse-xsd
 
 %description base
 This is the base package for %scl Software Collection.
-Installs a minimal set of Eclipse packages.
+Installs the set of Eclipse packages that are shared between this SCL and
+Red Hat Devstudio.
 
 %package runtime
 Summary: Runtime scripts for the %scl Software Collection
@@ -85,6 +164,9 @@ cat <<EOF >enable
 . scl_source enable rh-java-common
 
 # The IDE has optional deps on other collections, so enable them if present
+if test -e /opt/rh/devtoolset-6/enable ; then
+  . scl_source enable devtoolset-6
+fi
 if test -e /opt/rh/python27/enable ; then
   . scl_source enable python27
 fi
@@ -99,7 +181,7 @@ if test -e /opt/rh/rh-python35/enable ; then
 fi
 
 # General environment variables
-export PATH=%{_bindir}\${PATH:+:\${PATH}}
+export PATH=%{_bindir}:%{_prefix}/lib/jvm/java/bin\${PATH:+:\${PATH}}
 export MANPATH=%{_mandir}:\${MANPATH}
 
 # Needed by Java Packages Tools to locate java.conf
@@ -107,7 +189,7 @@ export JAVACONFDIRS="%{_sysconfdir}/java:\${JAVACONFDIRS:-/etc/java}"
 
 # Required by XMvn to locate its configuration files
 export XDG_CONFIG_DIRS="%{_sysconfdir}/xdg:\${XDG_CONFIG_DIRS:-/etc/xdg}"
-export XDG_DATA_DIRS="%{_datadir}:\${XDG_DATA_DIRS:+\${XDG_DATADIRS}:}/usr/local/share:/usr/share"
+export XDG_DATA_DIRS="%{_datadir}:\${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 
 # Some perl Ext::MakeMaker versions install things under /usr/lib/perl5
 # even though the system otherwise would go to /usr/lib64/perl5.
@@ -311,6 +393,13 @@ cat <<EOF >macros.%{scl}-scldevel
 %%scl_prefix_%{scl_name_base} %{scl_prefix}
 EOF
 
+# Additional SCL build macros
+# ===========================
+cat <<EOF >macros.%{scl}-config
+%%app_name_prefix Red Hat
+%%app_exec_prefix scl enable %{scl_name}
+EOF
+
 # Generate a helper script that will be used by help2man
 cat <<EOF >h2m_helper
 #!/bin/bash
@@ -339,6 +428,8 @@ install -p -m 644 macros.xmvn.x.%{scl} %{buildroot}%{_root_sysconfdir}/rpm/
 
 # Install java, ivy and xmvn config
 install -d -m 755 %{buildroot}%{_sysconfdir}/java
+install -d -m 755 %{buildroot}%{_sysconfdir}/java/security
+install -d -m 755 %{buildroot}%{_sysconfdir}/java/security/security.d
 install -p -m 644 java.conf %{buildroot}%{_sysconfdir}/java/
 install -p -m 644 javapackages-config.json %{buildroot}%{_sysconfdir}/java/
 install -d -m 755 %{buildroot}%{_sysconfdir}/ivy
@@ -348,8 +439,11 @@ install -p -m 644 configuration.xml %{buildroot}%{_sysconfdir}/xdg/xmvn/
 
 # Other directories that should be owned by the runtime
 install -d -m 755 %{buildroot}%{_datadir}/appdata
-# Native java bits are always in /usr/lib even on 64bit arches
+# Otherwise unowned java directories (native java bits are always in /usr/lib even on 64bit arches)
+install -d -m 755 %{buildroot}%{_prefix}/share/java
+install -d -m 755 %{buildroot}%{_prefix}/share/javadoc
 install -d -m 755 %{buildroot}%{_prefix}/lib/java
+install -d -m 755 %{buildroot}%{_prefix}/lib/jvm
 # Otherwise unowned maven directories
 install -d -m 755 %{buildroot}%{_datadir}/maven-metadata
 install -d -m 755 %{buildroot}%{_datadir}/maven-poms
@@ -358,21 +452,48 @@ install -d -m 755 %{buildroot}%{_libdir}/perl5
 install -d -m 755 %{buildroot}%{_libdir}/perl5/vendor_perl
 install -d -m 755 %{buildroot}%{_libdir}/perl5/vendor_perl/auto
 
+# Symlink to JVM in base operating system
+ln -s -T %{_root_prefix}/lib/jvm/java-1.8.0 %{buildroot}%{_prefix}/lib/jvm/java
+ln -s -T %{_root_prefix}/share/javadoc/java %{buildroot}%{_prefix}/share/javadoc/java
+
+# Additional SCL build macros
+cat macros.%{scl}-config >> %{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl}-config
+
+# Usage marker
+install -d -m 755 %{buildroot}%{_libdir}/eclipse/.pkgs
+echo "%{version}-%{release}" > %{buildroot}%{_libdir}/eclipse/.pkgs/RHSCL
+
+# Be more explicit about the content of libdir in the files list
+cat <<EOF | sed -e 's|\(.*%{_libdir}$\)|%%dir \1|' > filelist-scl
+%scl_files
+%%attr(555,root,root) %{_libdir}/games
+%%attr(555,root,root) %{_libdir}/perl5
+%%attr(555,root,root) %{_libdir}/pm-utils
+%%attr(555,root,root) %{_libdir}/sse2
+%%attr(555,root,root) %{_libdir}/tls
+%%attr(555,root,root) %{_libdir}/X11
+EOF
+
 %files
-# Metapackage only, empty file list
+# Metapackage only, empty file list except for usage marker
+%{_libdir}/eclipse/.pkgs
 
 %files base
 # Metapackage only, empty file list
 
-%files runtime -f filelist
+%files runtime -f filelist-scl -f filelist
 %doc README LICENSE
-%scl_files
 %{_sysconfdir}/ivy
 %{_sysconfdir}/java
 %dir %{_datadir}/appdata
+%dir %{_prefix}/share/java
+%dir %{_prefix}/share/javadoc
 %dir %{_prefix}/lib/java
+%dir %{_prefix}/lib/jvm
 %dir %{_datadir}/maven-metadata
 %dir %{_datadir}/maven-poms
+%{_prefix}/lib/jvm/java
+%{_prefix}/share/javadoc/java
 
 %files build
 %{_root_sysconfdir}/rpm/macros.%{scl}-config
@@ -382,6 +503,38 @@ install -d -m 755 %{buildroot}%{_libdir}/perl5/vendor_perl/auto
 %{_root_sysconfdir}/rpm/macros.%{scl}-scldevel
 
 %changelog
+* Tue Oct 25 2016 Mat Booth <mat.booth@redhat.com> - 1-13
+- Add dep on usage plugin and install marker file
+
+* Fri Oct 21 2016 Mat Booth <mat.booth@redhat.com> - 1-12
+- Move deps from main package to base to satisfy requirements for devstudio
+
+* Fri Aug 12 2016 Mat Booth <mat.booth@redhat.com> - 1-11
+- Adjust requirements for new tm-terminal package
+
+* Wed Aug 03 2016 Mat Booth <mat.booth@redhat.com> - 1-10
+- Add requires on webtools packages
+
+* Tue Aug 02 2016 Mat Booth <mat.booth@redhat.com> - 1-9
+- Add more requires to base package
+
+* Mon Aug 01 2016 Mat Booth <mat.booth@redhat.com> - 1-8
+- Add macros to configure application names for the collection
+
+* Mon Aug 01 2016 Mat Booth <mat.booth@redhat.com> - 1-7
+- Split installation between main metapackage and "base" metapackage,
+  rhbz#1361195
+- Enable DTS 6, if installed
+
+* Fri Jul 22 2016 Mat Booth <mat.booth@redhat.com> - 1-6
+- Improve RPM macros to deal with native jars
+
+* Fri Jul 22 2016 Mat Booth <mat.booth@redhat.com> - 1-5
+- Ensure JVM symlinks are always for Java 8 by default
+
+* Thu Jul 21 2016 Mat Booth <mat.booth@redhat.com> - 1-4
+- Add symlinks to base OS version of JVM for use during package builds
+
 * Thu Jul 21 2016 Mat Booth <mat.booth@redhat.com> - 1-3
 - Ensure Java 8 is available
 

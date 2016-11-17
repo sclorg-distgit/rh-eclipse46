@@ -1,5 +1,8 @@
 # This extends the mvn_install macro to fix directory ownership in maven-installed
 # java packages
+#
+# This file can be retired when the javapackages-tools package in rh-java-common
+# is updated to a new enough version
 
 %mvn_install(J:X) \
 xmvn-install %{?-X} -R .xmvn-reactor -n %{?scl:%{pkg_name}}%{!?scl:%{name}} -d "%{buildroot}" \
@@ -11,15 +14,11 @@ if [ -d "${jdir}" ]; then \
 fi \
 for mf in .mfiles* ; do \
    if [ -e "$mf" ] ; then \
-      jar=$(grep -e "%{_javadir}/.*/.*\.jar\$" $mf | cut -d' ' -f2 || :) \
-      if [ -n "$jar" ] ; then \
-         jardir=$(dirname $jar) \
-         echo "%dir $jardir" >>$mf \
-      fi \
-      pom=$(grep -e "%{_mavenpomdir}/.*/.*\.pom\$" $mf | cut -d' ' -f2 || :) \
-      if [ -n "$pom" ] ; then \
-         pomdir=$(dirname $pom) \
-         echo "%dir $pomdir" >>$mf \
+      jarpom=$(grep -e "\\(%{_javadir}\\|%{_jnidir}\\|%{_mavenpomdir}\\)/.*/.*\.\\(jar\\|pom\\)\$" $mf | cut -d' ' -f2 || :) \
+      if [ -n "$jarpom" ] ; then \
+         for dir in $(dirname $jarpom | sort | uniq) ; do \
+            echo "%dir $dir" >>$mf \
+         done \
       fi \
    fi \
 done \
