@@ -10,7 +10,7 @@
 Summary: Package that installs %scl
 Name: %scl_name
 Version: 1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv2+
 
 Source0: README
@@ -69,18 +69,21 @@ Installs all Eclipse packages available in this SCL.
 %package base
 Summary: Package that installs a minimal %scl
 Requires: %{name}-runtime = %{version}-%{release}
+Requires: %{scl_prefix}eclipse-abrt
 Requires: %{scl_prefix}eclipse-ecf-core
 Requires: %{scl_prefix}eclipse-ecf-runtime
 Requires: %{scl_prefix}eclipse-egit
 Requires: %{scl_prefix}eclipse-egit-mylyn
 Requires: %{scl_prefix}eclipse-emf-core
 Requires: %{scl_prefix}eclipse-emf-runtime
+Requires: %{scl_prefix}eclipse-epp-logging
 Requires: %{scl_prefix}eclipse-equinox-osgi
 Requires: %{scl_prefix}eclipse-filesystem
 Requires: %{scl_prefix}eclipse-jdt
 Requires: %{scl_prefix}eclipse-jgit
 Requires: %{scl_prefix}eclipse-linuxtools-docker
 Requires: %{scl_prefix}eclipse-linuxtools-vagrant
+Requires: %{scl_prefix}eclipse-mpc
 Requires: %{scl_prefix}eclipse-mylyn
 Requires: %{scl_prefix}eclipse-mylyn-builds
 Requires: %{scl_prefix}eclipse-mylyn-builds-hudson
@@ -476,6 +479,9 @@ cat macros.%{scl}-config >> %{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl}-co
 %{_root_sysconfdir}/rpm/macros.%{scl}-scldevel
 
 %changelog
+* Tue Aug 02 2016 Mat Booth <mat.booth@redhat.com> - 1-9
+- Add more requires to base package
+
 * Mon Aug 01 2016 Mat Booth <mat.booth@redhat.com> - 1-8
 - Add macros to configure application names for the collection
 
