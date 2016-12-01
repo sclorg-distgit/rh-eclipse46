@@ -10,7 +10,7 @@
 Summary: Package that installs %scl
 Name: %scl_name
 Version: 1
-Release: 13%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 
 Source0: README
@@ -34,6 +34,7 @@ Requires: %{scl_prefix}eclipse-dltk-ruby
 Requires: %{scl_prefix}eclipse-dltk-sh
 Requires: %{scl_prefix}eclipse-dltk-tcl
 Requires: %{scl_prefix}eclipse-gcov
+Requires: %{scl_prefix}eclipse-gef
 Requires: %{scl_prefix}eclipse-gprof
 Requires: %{scl_prefix}eclipse-launchbar
 Requires: %{scl_prefix}eclipse-linuxtools
@@ -41,10 +42,13 @@ Requires: %{scl_prefix}eclipse-linuxtools-javadocs
 Requires: %{scl_prefix}eclipse-linuxtools-libhover
 Requires: %{scl_prefix}eclipse-manpage
 Requires: %{scl_prefix}eclipse-mylyn-context-cdt
+Requires: %{scl_prefix}eclipse-mylyn-context-pde
+Requires: %{scl_prefix}eclipse-mylyn-versions-cvs
 Requires: %{scl_prefix}eclipse-oprofile
+Requires: %{scl_prefix}eclipse-p2-discovery
+Requires: %{scl_prefix}eclipse-pde
 Requires: %{scl_prefix}eclipse-perf
 Requires: %{scl_prefix}eclipse-ptp
-Requires: %{scl_prefix}eclipse-ptp-gem
 Requires: %{scl_prefix}eclipse-ptp-rm-contrib
 Requires: %{scl_prefix}eclipse-ptp-sci
 Requires: %{scl_prefix}eclipse-ptp-sdm
@@ -55,6 +59,7 @@ Requires: %{scl_prefix}eclipse-rpm-editor
 Requires: %{scl_prefix}eclipse-rse
 Requires: %{scl_prefix}eclipse-rse-server
 Requires: %{scl_prefix}eclipse-systemtap
+Requires: %{scl_prefix}eclipse-tm-terminal
 Requires: %{scl_prefix}eclipse-valgrind
 
 %description
@@ -64,48 +69,31 @@ Installs all Eclipse packages available in this SCL.
 %package base
 Summary: Package that installs a minimal %scl
 Requires: %{name}-runtime = %{version}-%{release}
-Requires: %{scl_prefix}eclipse-abrt
-Requires: %{scl_prefix}eclipse-cdt-native
 Requires: %{scl_prefix}eclipse-ecf-core
 Requires: %{scl_prefix}eclipse-ecf-runtime
 Requires: %{scl_prefix}eclipse-egit
 Requires: %{scl_prefix}eclipse-egit-mylyn
 Requires: %{scl_prefix}eclipse-emf-core
 Requires: %{scl_prefix}eclipse-emf-runtime
-Requires: %{scl_prefix}eclipse-epp-logging
 Requires: %{scl_prefix}eclipse-equinox-osgi
 Requires: %{scl_prefix}eclipse-filesystem
-Requires: %{scl_prefix}eclipse-gef
 Requires: %{scl_prefix}eclipse-jdt
 Requires: %{scl_prefix}eclipse-jgit
 Requires: %{scl_prefix}eclipse-linuxtools-docker
 Requires: %{scl_prefix}eclipse-linuxtools-vagrant
-Requires: %{scl_prefix}eclipse-mpc
 Requires: %{scl_prefix}eclipse-mylyn
 Requires: %{scl_prefix}eclipse-mylyn-builds
 Requires: %{scl_prefix}eclipse-mylyn-builds-hudson
 Requires: %{scl_prefix}eclipse-mylyn-context-java
-Requires: %{scl_prefix}eclipse-mylyn-context-pde
 Requires: %{scl_prefix}eclipse-mylyn-docs-epub
 Requires: %{scl_prefix}eclipse-mylyn-docs-wikitext
 Requires: %{scl_prefix}eclipse-mylyn-tasks-bugzilla
 Requires: %{scl_prefix}eclipse-mylyn-tasks-trac
 Requires: %{scl_prefix}eclipse-mylyn-tasks-web
 Requires: %{scl_prefix}eclipse-mylyn-versions
-Requires: %{scl_prefix}eclipse-mylyn-versions-cvs
 Requires: %{scl_prefix}eclipse-mylyn-versions-git
-Requires: %{scl_prefix}eclipse-p2-discovery
-Requires: %{scl_prefix}eclipse-pde
 Requires: %{scl_prefix}eclipse-platform
 Requires: %{scl_prefix}eclipse-swt
-Requires: %{scl_prefix}eclipse-tm-terminal
-Requires: %{scl_prefix}eclipse-tm-terminal-connectors
-Requires: %{scl_prefix}eclipse-usage
-Requires: %{scl_prefix}eclipse-webtools-common
-Requires: %{scl_prefix}eclipse-webtools-javaee
-Requires: %{scl_prefix}eclipse-webtools-jsf
-Requires: %{scl_prefix}eclipse-webtools-servertools
-Requires: %{scl_prefix}eclipse-webtools-sourceediting
 Requires: %{scl_prefix}eclipse-xsd
 
 %description base
@@ -459,30 +447,15 @@ ln -s -T %{_root_prefix}/share/javadoc/java %{buildroot}%{_prefix}/share/javadoc
 # Additional SCL build macros
 cat macros.%{scl}-config >> %{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl}-config
 
-# Usage marker
-install -d -m 755 %{buildroot}%{_libdir}/eclipse/.pkgs
-echo "%{version}-%{release}" > %{buildroot}%{_libdir}/eclipse/.pkgs/RHSCL
-
-# Be more explicit about the content of libdir in the files list
-cat <<EOF | sed -e 's|\(.*%{_libdir}$\)|%%dir \1|' > filelist-scl
-%scl_files
-%%attr(555,root,root) %{_libdir}/games
-%%attr(555,root,root) %{_libdir}/perl5
-%%attr(555,root,root) %{_libdir}/pm-utils
-%%attr(555,root,root) %{_libdir}/sse2
-%%attr(555,root,root) %{_libdir}/tls
-%%attr(555,root,root) %{_libdir}/X11
-EOF
-
 %files
-# Metapackage only, empty file list except for usage marker
-%{_libdir}/eclipse/.pkgs
+# Metapackage only, empty file list
 
 %files base
 # Metapackage only, empty file list
 
-%files runtime -f filelist-scl -f filelist
+%files runtime -f filelist
 %doc README LICENSE
+%scl_files
 %{_sysconfdir}/ivy
 %{_sysconfdir}/java
 %dir %{_datadir}/appdata
@@ -503,21 +476,6 @@ EOF
 %{_root_sysconfdir}/rpm/macros.%{scl}-scldevel
 
 %changelog
-* Tue Oct 25 2016 Mat Booth <mat.booth@redhat.com> - 1-13
-- Add dep on usage plugin and install marker file
-
-* Fri Oct 21 2016 Mat Booth <mat.booth@redhat.com> - 1-12
-- Move deps from main package to base to satisfy requirements for devstudio
-
-* Fri Aug 12 2016 Mat Booth <mat.booth@redhat.com> - 1-11
-- Adjust requirements for new tm-terminal package
-
-* Wed Aug 03 2016 Mat Booth <mat.booth@redhat.com> - 1-10
-- Add requires on webtools packages
-
-* Tue Aug 02 2016 Mat Booth <mat.booth@redhat.com> - 1-9
-- Add more requires to base package
-
 * Mon Aug 01 2016 Mat Booth <mat.booth@redhat.com> - 1-8
 - Add macros to configure application names for the collection
 
