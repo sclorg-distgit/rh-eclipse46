@@ -10,7 +10,7 @@
 Summary: Package that installs %scl
 Name: %scl_name
 Version: 1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv2+
 
 Source0: README
@@ -97,6 +97,11 @@ Requires: %{scl_prefix}eclipse-mylyn-versions
 Requires: %{scl_prefix}eclipse-mylyn-versions-git
 Requires: %{scl_prefix}eclipse-platform
 Requires: %{scl_prefix}eclipse-swt
+Requires: %{scl_prefix}eclipse-webtools-common
+Requires: %{scl_prefix}eclipse-webtools-javaee
+Requires: %{scl_prefix}eclipse-webtools-jsf
+Requires: %{scl_prefix}eclipse-webtools-servertools
+Requires: %{scl_prefix}eclipse-webtools-sourceediting
 Requires: %{scl_prefix}eclipse-xsd
 
 %description base
@@ -479,6 +484,9 @@ cat macros.%{scl}-config >> %{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl}-co
 %{_root_sysconfdir}/rpm/macros.%{scl}-scldevel
 
 %changelog
+* Wed Aug 03 2016 Mat Booth <mat.booth@redhat.com> - 1-10
+- Add requires on webtools packages
+
 * Tue Aug 02 2016 Mat Booth <mat.booth@redhat.com> - 1-9
 - Add more requires to base package
 
