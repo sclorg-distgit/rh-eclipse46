@@ -10,7 +10,7 @@
 Summary: Package that installs %scl
 Name: %scl_name
 Version: 1
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2+
 
 Source0: README
@@ -45,10 +45,10 @@ Requires: %{scl_prefix}eclipse-mylyn-context-cdt
 Requires: %{scl_prefix}eclipse-mylyn-context-pde
 Requires: %{scl_prefix}eclipse-mylyn-versions-cvs
 Requires: %{scl_prefix}eclipse-oprofile
-Requires: %{scl_prefix}eclipse-p2-discovery
 Requires: %{scl_prefix}eclipse-pde
 Requires: %{scl_prefix}eclipse-perf
 Requires: %{scl_prefix}eclipse-ptp
+Requires: %{scl_prefix}eclipse-ptp-gem
 Requires: %{scl_prefix}eclipse-ptp-rm-contrib
 Requires: %{scl_prefix}eclipse-ptp-sci
 Requires: %{scl_prefix}eclipse-ptp-sdm
@@ -59,7 +59,7 @@ Requires: %{scl_prefix}eclipse-rpm-editor
 Requires: %{scl_prefix}eclipse-rse
 Requires: %{scl_prefix}eclipse-rse-server
 Requires: %{scl_prefix}eclipse-systemtap
-Requires: %{scl_prefix}eclipse-tm-terminal
+Requires: %{scl_prefix}eclipse-tm-terminal-connectors
 Requires: %{scl_prefix}eclipse-valgrind
 
 %description
@@ -95,8 +95,10 @@ Requires: %{scl_prefix}eclipse-mylyn-tasks-trac
 Requires: %{scl_prefix}eclipse-mylyn-tasks-web
 Requires: %{scl_prefix}eclipse-mylyn-versions
 Requires: %{scl_prefix}eclipse-mylyn-versions-git
+Requires: %{scl_prefix}eclipse-p2-discovery
 Requires: %{scl_prefix}eclipse-platform
 Requires: %{scl_prefix}eclipse-swt
+Requires: %{scl_prefix}eclipse-tm-terminal
 Requires: %{scl_prefix}eclipse-webtools-common
 Requires: %{scl_prefix}eclipse-webtools-javaee
 Requires: %{scl_prefix}eclipse-webtools-jsf
@@ -484,6 +486,9 @@ cat macros.%{scl}-config >> %{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl}-co
 %{_root_sysconfdir}/rpm/macros.%{scl}-scldevel
 
 %changelog
+* Fri Aug 12 2016 Mat Booth <mat.booth@redhat.com> - 1-11
+- Adjust requirements for new tm-terminal package
+
 * Wed Aug 03 2016 Mat Booth <mat.booth@redhat.com> - 1-10
 - Add requires on webtools packages
 
